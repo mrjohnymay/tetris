@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <script>
+            var Joc = {
+                espai: null,
+                estat: null,
+                puntuacioJugador: 0,
+                puntuacioMaxima: 0,
+                nivell: 0,
+                pecaVigent: null,
+                seguentPeca: null,
+                comptador: new Array(7),
+                interval: 0,
+                inicialitzarJoc: function () {
+                    this.espai = [
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    ];
+                    this.estat = null;
+                    this.puntuacioJugador = 0;
+                    this.puntuacioMaxima = 0;
+                    this.nivell = 1;
+                    this.pecaVigent = 0;
+                    this.seguentPeca = 0;
+                    this.comptador["i"] = 0;
+                    this.comptador["j"] = 0;
+                    this.comptador["l"] = 0;
+                    this.comptador["o"] = 0;
+                    this.comptador["s"] = 0;
+                    this.comptador["t"] = 0;
+                    this.comptador["z"] = 0;
+                    this.interval = 0;
+                },
+                calcularSeguentPeca: function(){
+                    //TODO
+                },
+                introduccioTeclat: function(){
+                    //TODO
+                },
+                moviment: function(){
+                    //TODO
+                },
+                mostrar: function () {
+                    for (var i = 0; i < this.espai.length; i++) {
+                        for (var j = 0; j < this.espai[i].length; j++) {
+                            document.write(this.espai[i][j]);
+                        }
+                        document.write("<br>");
+                    }
+                    document.write("<br>");
+                    document.write("Puntuacio Jugador: " + this.puntuacioJugador);
+                    document.write("<br>");
+                    document.write("Puntuacio màxima: " + this.puntuacioMaxima);
+                    document.write("<br>");
+                    document.write("Nivell: " + this.nivell);
+                }
+            };
+
+            Joc.inicialitzarJoc();
+            Joc.mostrar();
+        </script>
+    </body>
+</html>
