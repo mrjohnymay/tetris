@@ -65,13 +65,13 @@ and open the template in the editor.
                     this.comptador["z"] = 0;
                     this.interval = 0;
                 },
-                calcularSeguentPeca: function(){
+                calcularSeguentPeca: function () {
                     //TODO
                 },
-                introduccioTeclat: function(){
+                introduccioTeclat: function () {
                     //TODO
                 },
-                moviment: function(){
+                moviment: function () {
                     //TODO
                 },
                 mostrar: function () {
@@ -88,6 +88,71 @@ and open the template in the editor.
                     document.write("<br>");
                     document.write("Nivell: " + this.nivell);
                 }
+            };
+
+            var Objecte = function (forma, color) {
+                this.forma = null;
+                this.color = color;
+                this.posicio = [0][0] = 5;
+                this.posicio = [0][1] = 0;
+            };
+            Objecte.prototype.rotarHorari = function () {
+                var formaNova = new Array();
+                for (var i = 0; i < this.forma.length; i++) {
+                    formaNova[i] = new Array();
+                    for (var j = 0; j < this.forma[i].length; j++) {
+                        formaNova[i][j] = this.forma[this.forma[i].length - 1 - j][i];
+                    }
+                }
+                this.forma = formaNova;
+            };
+            Objecte.prototype.rotarAntihorari = function () {
+                for (var i = 0; i < 3; i++) {
+                    var formaNova = new Array();
+                    for (var i = 0; i < this.forma.length; i++) {
+                        formaNova[i] = new Array();
+                        for (var j = 0; j < this.forma[i].length; j++) {
+                            formaNova[i][j] = this.forma[this.forma[i].length - 1 - j][i];
+                        }
+                    }
+                    this.forma = formaNova;
+                }
+            };
+            Objecte.prototype.baixar = function () {
+                if ((y + 1) > 0) {
+                    x++;
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+            Objecte.prototype.moureDreta = function () {
+                if ((x - 1) > 0) {
+                    x--;
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+            Objecte.prototype.moureEsquerra = function () {
+                if ((x + 1) < 14) {
+                    x++;
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+            Objecte.prototype.retornarPeca = function () {
+                var peces = [
+                    [[[0, 0, 0, 0], [0, 1, 1, 0], [0, 1, 1, 0], [0, 0, 0, 0]], "groc"],
+                    [[[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]], "lila"],
+                    [[[0, 0, 0, 0], [0, 1, 1, 0], [1, 1, 0, 0], [0, 0, 0, 0]], "verd"],
+                    [[[0, 0, 0, 0], [0, 1, 1, 0], [0, 0, 1, 1], [0, 0, 0, 0]], "roig"],
+                    [[[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 1, 0], [0, 0, 0, 0]], "blau"],
+                    [[[0, 1, 1, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 0, 0, 0]], "taronga"],
+                    [[[0, 0, 0, 0], [1, 1, 1, 0], [0, 1, 0, 0], [0, 0, 0, 0]], "morat"]];
+                var numeroAleatori = Math.round(Math.random() * 6);
+                return peces[numeroAleatori];
             };
 
             Joc.inicialitzarJoc();
