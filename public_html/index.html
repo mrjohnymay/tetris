@@ -10,8 +10,11 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body>
+    <body id="body">
         <script>
+
+            //var a = setInterval(movimiento, 1000);
+
             var Joc = {
                 espai: null,
                 estat: null,
@@ -22,6 +25,7 @@ and open the template in the editor.
                 seguentPeca: null,
                 comptador: new Array(7),
                 interval: 0,
+
                 inicialitzarJoc: function () {
                     this.espai = [
                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -55,7 +59,7 @@ and open the template in the editor.
                     this.puntuacioMaxima = 0;
                     this.nivell = 1;
                     this.pecaVigent = 0;
-                    this.seguentPeca = 0;
+                    this.seguentPeca = GeneraPecaAleatoria();
                     this.comptador["i"] = 0;
                     this.comptador["j"] = 0;
                     this.comptador["l"] = 0;
@@ -65,36 +69,72 @@ and open the template in the editor.
                     this.comptador["z"] = 0;
                     this.interval = 0;
                 },
-                calcularSeguentPeca: function () {
-                    //TODO
-                },
                 introduccioTeclat: function () {
                     //TODO
                 },
                 moviment: function () {
-                    //TODO
+                    document.body.innerHTML = "";
+
+                    for (var i = 0; i < pa.forma[0].length; i++) {
+                        for (var j = 0; j < pa.forma[1].length; j++) {
+                            if (pa.forma[i][j] === 1) {
+                                Joc.espai[i + pa.x][j + pa.y] = 1;
+                            }
+                        }
+                    }
+
+                    Joc.mostrar();
+
+                    if (pa.x + 5 <= 25) {
+                        if (Joc.espai[(pa.x) + 4][pa.y] === 0 && Joc.espai[(pa.x) + 4][pa.y + 1] === 0 && Joc.espai[(pa.x) + 4][pa.y + 2] === 0 && Joc.espai[(pa.x) + 4][pa.y + 3] === 0) {
+                            for (var i = 0; i < pa.forma[0].length; i++) {
+                                for (var j = 0; j < pa.forma[1].length; j++) {
+                                    if (pa.forma[i][j] === 1) {
+                                        Joc.espai[i + pa.x][j + pa.y] = 0;
+                                    }
+                                }
+                            }
+                            pa.x++;
+                        } else {
+                            canviarPeca();
+                        }
+                    } else {
+                        canviarPeca();
+                    }
                 },
                 mostrar: function () {
-                    for (var i = 0; i < this.espai.length; i++) {
-                        for (var j = 0; j < this.espai[i].length; j++) {
-                            document.write(this.espai[i][j]);
+                    document.write("<br>Peça següent:<br>");
+                    for (var i = 0; i < ps.forma[0].length; i++) {
+                        for (var j = 0; j < ps.forma[1].length; j++) {
+                            document.write(ps.forma[i][j]);
+                            document.write(" ");
                         }
                         document.write("<br>");
                     }
+                    document.write("<br>");
                     document.write("<br>");
                     document.write("Puntuacio Jugador: " + this.puntuacioJugador);
                     document.write("<br>");
                     document.write("Puntuacio màxima: " + this.puntuacioMaxima);
                     document.write("<br>");
                     document.write("Nivell: " + this.nivell);
+                    document.write("<br><br>");
+
+                    for (var i = 0; i < this.espai.length; i++) {
+                        for (var j = 0; j < this.espai[i].length; j++) {
+                            document.write(this.espai[i][j]);
+                            document.write(" ");
+                        }
+                        document.write("<br>");
+                    }
                 }
             };
 
             var Objecte = function (forma, color) {
-                this.forma = null;
+                this.forma = forma;
                 this.color = color;
-                this.posicio = [0][0] = 5;
-                this.posicio = [0][1] = 0;
+                this.x = 0;
+                this.y = 3;
             };
             Objecte.prototype.rotarHorari = function () {
                 var formaNova = new Array();
@@ -143,6 +183,10 @@ and open the template in the editor.
                 }
             };
             Objecte.prototype.retornarPeca = function () {
+                return this.forma;
+            };
+
+            function GeneraPecaAleatoria() {
                 var peces = [
                     [[[0, 0, 0, 0], [0, 1, 1, 0], [0, 1, 1, 0], [0, 0, 0, 0]], "groc"],
                     [[[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]], "lila"],
@@ -153,10 +197,29 @@ and open the template in the editor.
                     [[[0, 0, 0, 0], [1, 1, 1, 0], [0, 1, 0, 0], [0, 0, 0, 0]], "morat"]];
                 var numeroAleatori = Math.round(Math.random() * 6);
                 return peces[numeroAleatori];
-            };
+            }
+
+            function canviarPeca() {
+                pa.forma = ps.forma;
+                pa.color = ps.color;
+                pa.x = 0;
+                pa.y = 3;
+                Joc.seguentPeca = GeneraPecaAleatoria();
+                ps.forma = Joc.seguentPeca[0];
+                ps.color = Joc.seguentPeca[1];
+                ps.x = 0;
+                ps.y = 3;
+            }
 
             Joc.inicialitzarJoc();
-            Joc.mostrar();
+
+            pa = new Objecte(GeneraPecaAleatoria()[0], GeneraPecaAleatoria()[1]);
+            Joc.pecaVigent = pa;
+            ps = new Objecte(Joc.seguentPeca[0], Joc.seguentPeca[1]);
+
+            a = setInterval(Joc.moviment, 500);
+
+            //Joc.moviment();
         </script>
     </body>
 </html>
