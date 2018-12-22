@@ -10,6 +10,7 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+        <!--Aplico l'estil als canvas-->
         <style>
             body{
                 background-image: url('bg.jpg');
@@ -26,9 +27,17 @@ and open the template in the editor.
                 margin-bottom: 170px;
             }
 
+            #puntuaciotxt {
+                color: white; 
+                background-color: black; 
+                padding: 5px; 
+                font-family: 'Righteous', cursive;
+            }
+
         </style>
     </head>
     <body id="TODO">
+        <!--Carrego les imatges-->
         <img src="1.png" id="1" style="display: none;">
         <img src="2.png" id="2" style="display: none;">
         <img src="3.png" id="3" style="display: none;">
@@ -38,16 +47,17 @@ and open the template in the editor.
         <img src="7.png" id="7" style="display: none;">
         <img src="8.jpg" id="8" style="display: none;">
 
+        <!--Creo un canvas per a mostrar la peca següent i un altre per mostrar l'espai de joc-->
         <canvas id="peca" width="300" height="300"></canvas>
         <canvas id="espacio" width="300" height="750"></canvas>
-        <div style="color: white; background-color: black; padding: 5px; font-family: 'Righteous', cursive;">
+        <!--En aquest div mostraré la puntuació-->
+        <div id="puntuaciotxt">
             <h2>Puntos:</h2>
             <p id="puntuacio"></p><p id="puntuaciomax"></p>
         </div>
         <script>
 
-            puntos = sessionStorage.getItem('puntos');
-
+            //Es crea l'objecte joc amb totes les variables i s'inicialitzen
             var Joc = {
                 espai: null,
                 estat: null,
@@ -99,11 +109,10 @@ and open the template in the editor.
                     this.comptador["s"] = 0;
                     this.comptador["t"] = 0;
                     this.comptador["z"] = 0;
-                    this.interval = 0;
+                    this.interval = 250;
                 },
+                //Comprovem quina tecla s'ha clicat i cridem a la funció corresponent. Si clica al botó per a baixar, s'increementa la puntuació.
                 introduccioTeclat: function (e) {
-                    console.log(e.key);
-
                     if (e.key === "ArrowRight") {
                         pa.moureDreta();
                     } else if (e.key === "ArrowLeft") {
@@ -115,13 +124,17 @@ and open the template in the editor.
                         pa.baixar();
                     }
                 },
+                //Aquesta és la funció per a moure les peces i la que sempre s'executa.
                 moviment: function () {
+
+                    //Amb els ifs comprovo si es la forma del pal, per a comprovar que està dins del límit.
                     if (pa.color === "lila") {
                         n = 4;
                     } else {
                         n = 3;
                     }
 
+                    //Comprovo si pot baixar. Si no pot baixar, canvio la peça. Si puc baixar el·limino la peça vigent del espai i incremento la posició.
                     if (pa.x + n < 25) {
                         if (comprovar() === true) {
                             canviarPeca();
@@ -139,6 +152,8 @@ and open the template in the editor.
                         canviarPeca();
                     }
 
+                    //Ara comprovo, si en la fila 3 hi ha alguna peça, en el cas de que hi hagi alguna peça, el jugador perd.
+                    //Mostro que ha perdut, guardo la puntuació en una sessió si és major, paro l'interval i recarrego la pàgina.
                     for (var i = 0; i < Joc.espai[3].length; i++) {
                         if (Joc.espai[3][i] !== 0) {
                             alert("Has perdut");
@@ -151,6 +166,7 @@ and open the template in the editor.
                         }
                     }
 
+                    //Amb aquest for comprovo si una fila s'ha completat. Si s'ha completat, executo la funció per a natejar la fila.
                     for (var i = 0; i < Joc.espai.length; i++) {
                         var c = 0;
                         for (var j = 0; j < Joc.espai[i].length; j++) {
@@ -163,6 +179,7 @@ and open the template in the editor.
                         }
                     }
 
+                    //Una vegada fetes les comprovacions, guardo a l'espai la lletra de la peça depenent del color.
                     for (var i = 0; i < pa.forma[0].length; i++) {
                         for (var j = 0; j < pa.forma[1].length; j++) {
                             if (pa.forma[i][j] === 1) {
@@ -185,14 +202,18 @@ and open the template in the editor.
                         }
                     }
 
+                    //Finalment, mostro tot el joc.
                     Joc.mostrar();
                 },
                 mostrar: function () {
+
+                    //Creo el primer canvas per a la peça següent.
                     var canvas = document.getElementById("peca");
                     var ctx = canvas.getContext("2d");
 
                     var img;
 
+                    //Mostro la peça en un únic color per simplificar el codi. Es podria canviar el color mirant ps.color.
                     for (var i = 0; i < ps.forma.length; i++) {
                         for (var j = 0; j < ps.forma[i].length; j++) {
                             if (ps.forma[i][j] !== 0) {
@@ -204,11 +225,13 @@ and open the template in the editor.
                         }
                     }
 
+                    //Actualitzo el canvas per a que ara mostri el tauler.
                     canvas = document.getElementById("espacio");
                     ctx = canvas.getContext("2d");
 
                     img = null;
 
+                    //Aquí si que comprovo de quin color és la peça l'assigno a una imatge.
                     for (var i = 0; i < this.espai.length; i++) {
                         for (var j = 0; j < this.espai[i].length; j++) {
                             if (this.espai[i][j] === 'O') {
@@ -231,10 +254,14 @@ and open the template in the editor.
                             ctx.drawImage(img, j * 30, i * 30, 30, 30);
                         }
                     }
+
+                    //Finalment, mostro la puntuació actual i la màxima.
                     document.getElementById("puntuacio").innerHTML = "Puntuació: " + Joc.puntuacioJugador;
                     document.getElementById("puntuaciomax").innerHTML = "Màxima puntuació: " + Joc.puntuacioMaxima;
                 }
             };
+
+            //Creo l'objecte i les variables.
             var Objecte = function (forma, color) {
                 this.forma = forma;
                 this.color = color;
@@ -252,10 +279,12 @@ and open the template in the editor.
                 }
                 this.forma = formaNova;
             };
+            //Quan el jugador fa clic a baixar, simplement incremento la puntuació i torno a executar la funció de moviment.
             Objecte.prototype.baixar = function () {
                 Joc.puntuacioJugador++;
                 Joc.moviment();
             };
+            //Per a moure les peces, primer comprovo, natejo i moc.
             Objecte.prototype.moureDreta = function () {
                 if ((comprovarDreta() + pa.y) < 10) {
                     limpiar();
@@ -268,10 +297,8 @@ and open the template in the editor.
                     pa.y--;
                 }
             };
-            Objecte.prototype.retornarPeca = function () {
-                return this.forma;
-            };
 
+            //En aquesta funció, simplement natejo la fila amb 0. Volía fer que les demès peces baixaran però no m'ha donat temps.
             function netejarFila(fila) {
                 for (var i = 0; i < Joc.espai.length; i++) {
                     Joc.espai[fila][i] = 0;
@@ -291,6 +318,7 @@ and open the template in the editor.
                 return peces[numeroAleatori];
             }
 
+            //Aquesta funció nateja la peça del espai.
             function limpiar() {
                 for (var i = 0; i < pa.forma[0].length; i++) {
                     for (var j = 0; j < pa.forma[1].length; j++) {
@@ -301,8 +329,9 @@ and open the template in the editor.
                 }
             }
 
+            //Aquesta funció comprova si la peça pot baixar.
             function comprovar() {
-                bool = false;
+                var bool = false;
 
                 for (var i = 0; i < pa.forma[0].length; i++) {
                     for (var j = 0; j < pa.forma[1].length; j++) {
@@ -324,6 +353,7 @@ and open the template in the editor.
                 return bool;
             }
 
+            //En aquesta funció comprovo si puc anar cap a la dreta. <<Aquesta funció no funciona correctament.>>
             function comprovarDreta() {
                 for (var i = 0; i < pa.forma[3].length; i++) {
                     if (pa.forma[i][3] === 1) {
@@ -342,6 +372,7 @@ and open the template in the editor.
                 }
             }
 
+            //En aquesta funció comprovo si puc anar cap a la esquerra. <<Aquesta funció no funciona correctament.>>
             function comprovarEsquerra() {
                 for (var i = 0; i < pa.forma[0].length; i++) {
                     if (pa.forma[i][0] === 1) {
@@ -360,6 +391,7 @@ and open the template in the editor.
                 }
             }
 
+            //En aquesta funció canvio les variables de la peça actual per a les de la peça següent.
             function canviarPeca() {
                 pa.forma = ps.forma;
                 pa.color = ps.color;
@@ -374,18 +406,18 @@ and open the template in the editor.
                 comptadorPeces();
             }
 
+            //En aquesta funció, miro quantes peces han sortit, i si és múltiple de 10, incremento el interval un 10%.
             function incrementarVel() {
                 var peces = Joc.comptador["o"] + Joc.comptador["i"] + Joc.comptador["s"] + Joc.comptador["z"] + Joc.comptador["l"] + Joc.comptador["j"];
 
                 if (peces % 10 === 0) {
-                    velocitat -= ((velocitat / 100) * 10);
+                    Joc.interval -= ((Joc.interval / 100) * 10);
                     clearInterval(a);
-                    a = setInterval(Joc.moviment, velocitat);
+                    a = setInterval(Joc.moviment, Joc.interval);
                 }
-                console.log(peces);
-                console.log(velocitat);
             }
 
+            //En aquesta funció compto les peces que van sortint i miro si s'ha de incrementar la velocitat.
             function comptadorPeces() {
                 if (pa.color === "groc") {
                     Joc.comptador["o"]++;
@@ -403,19 +435,25 @@ and open the template in the editor.
 
                 incrementarVel();
             }
-
-            velocitat = 250;
+            
+            //Inicialitzo el joc.
             Joc.inicialitzarJoc();
+            
+            //Creo una peça auxiliar per a poder emmagatzemar les dues dades de la peça aleatòria.
             var peca = new Array();
             peca = GeneraPecaAleatoria();
+            
+            //Creo la peça actual i la assigno al joc.
             pa = new Objecte(peca[0], peca[1]);
             Joc.pecaVigent = pa;
+            
+            //Faig el mateix amb la següent peça.
             ps = new Objecte(Joc.seguentPeca[0], Joc.seguentPeca[1]);
-            a = setInterval(Joc.moviment, velocitat);
-
+            
+            //Creo l'interval i guardo les tecles.
+            a = setInterval(Joc.moviment, Joc.interval);
             var element = document.getElementById("TODO");
             element.addEventListener("keydown", Joc.introduccioTeclat);
-            console.log(element);
         </script>
     </body>
 </html>
