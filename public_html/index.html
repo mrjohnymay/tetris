@@ -9,6 +9,24 @@ and open the template in the editor.
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+        <style>
+            body{
+                background-image: url('bg.jpg');
+                text-align: center;
+            }
+
+            #espacio{
+                box-shadow: 0 0px 8px 8px rgba(102,51,153, 0.2), 0 10px 20px 0 rgba(102,51,153, 0.19);
+            }
+
+            #peca{
+                box-shadow: 0px 0px 8px 8px rgba(102,51,153, 0.2), 0 10px 20px 0 rgba(102,51,153, 0.19);
+                margin-right: 150px;
+                margin-bottom: 170px;
+            }
+
+        </style>
     </head>
     <body id="TODO">
         <img src="1.png" id="1" style="display: none;">
@@ -20,9 +38,16 @@ and open the template in the editor.
         <img src="7.png" id="7" style="display: none;">
         <img src="8.jpg" id="8" style="display: none;">
 
-        <canvas id="espacio" width="300" height="800"></canvas>
+        <canvas id="peca" width="300" height="300"></canvas>
+        <canvas id="espacio" width="300" height="750"></canvas>
+        <div style="color: white; background-color: black; padding: 5px; font-family: 'Righteous', cursive;">
+            <h2>Puntos:</h2>
+            <p id="puntuacio"></p><p id="puntuaciomax"></p>
+        </div>
         <script>
-            //var a = setInterval(movimiento, 1000);
+
+            puntos = sessionStorage.getItem('puntos');
+
             var Joc = {
                 espai: null,
                 estat: null,
@@ -63,7 +88,7 @@ and open the template in the editor.
                     ];
                     this.estat = null;
                     this.puntuacioJugador = 0;
-                    this.puntuacioMaxima = 0;
+                    this.puntuacioMaxima = sessionStorage.getItem('puntos');
                     this.nivell = 1;
                     this.pecaVigent = 0;
                     this.seguentPeca = GeneraPecaAleatoria();
@@ -86,12 +111,11 @@ and open the template in the editor.
                     } else if (e.key === "ArrowUp") {
                         pa.rotarHorari();
                     } else if (e.key === "ArrowDown") {
+                        Joc.puntuacioJugador++;
                         pa.baixar();
                     }
                 },
                 moviment: function () {
-                    // document.body.innerHTML = "";
-
                     if (pa.color === "lila") {
                         n = 4;
                     } else {
@@ -115,6 +139,30 @@ and open the template in the editor.
                         canviarPeca();
                     }
 
+                    for (var i = 0; i < Joc.espai[3].length; i++) {
+                        if (Joc.espai[3][i] !== 0) {
+                            alert("Has perdut");
+                            if (Joc.puntuacioJugador > Joc.puntuacioMaxima) {
+                                Joc.puntuacioMaxima = Joc.puntuacioJugador;
+                                sessionStorage.setItem('puntos', Joc.puntuacioMaxima);
+                            }
+                            clearInterval(a);
+                            location.reload();
+                        }
+                    }
+
+                    for (var i = 0; i < Joc.espai.length; i++) {
+                        var c = 0;
+                        for (var j = 0; j < Joc.espai[i].length; j++) {
+                            if (Joc.espai[i][j] !== 0) {
+                                c++;
+                            }
+                        }
+                        if (c === 10) {
+                            netejarFila(i);
+                        }
+                    }
+
                     for (var i = 0; i < pa.forma[0].length; i++) {
                         for (var j = 0; j < pa.forma[1].length; j++) {
                             if (pa.forma[i][j] === 1) {
@@ -133,7 +181,6 @@ and open the template in the editor.
                                 } else {
                                     Joc.espai[i + pa.x][j + pa.y] = 'T';
                                 }
-
                             }
                         }
                     }
@@ -141,62 +188,51 @@ and open the template in the editor.
                     Joc.mostrar();
                 },
                 mostrar: function () {
-                    var canvas = document.getElementById("espacio");
+                    var canvas = document.getElementById("peca");
                     var ctx = canvas.getContext("2d");
+
                     var img;
-                    console.log(Joc.puntuacioJugador);
-//                    document.write("<br>Peça següent:<br>");
-//                    for (var i = 0; i < ps.forma[0].length; i++) {
-//                        for (var j = 0; j < ps.forma[1].length; j++) {
-//                            document.write(ps.forma[i][j]);
-//                            document.write(" ");
-//                        }
-//                        document.write("<br>");
-//                    }
-//                    document.write("<br>");
-//                    document.write("<br>");
-//                    document.write("Puntuacio Jugador: " + this.puntuacioJugador);
-//                    document.write("<br>");
-//                    document.write("Puntuacio màxima: " + this.puntuacioMaxima);
-//                    document.write("<br>");
-//                    document.write("Nivell: " + this.nivell);
-//                    document.write("<br><br>");
-//                    document.write("<table style='bg-color: black; border-collapse: collapse;'>");
-                    for (var i = 0; i < this.espai.length; i++) {
-                        //document.write("<tr>");
-                        for (var j = 0; j < this.espai[i].length; j++) {
-                            if (this.espai[i][j] === 'O') {
-                                //document.write("<td style='width: px; height:15px;' bgcolor='#f4f442'></td>");
+
+                    for (var i = 0; i < ps.forma.length; i++) {
+                        for (var j = 0; j < ps.forma[i].length; j++) {
+                            if (ps.forma[i][j] !== 0) {
                                 img = document.getElementById("1");
-                            } else if (this.espai[i][j] === 'I') {
-                                //document.write("<td style='width: 15px; height:15px;' bgcolor='#7d41f4'></td>");
-                                img = document.getElementById("2");
-                            } else if (this.espai[i][j] === 'S') {
-                                //document.write("<td style='width: 15px; height:15px;' bgcolor='#41f467'></td>");
-                                img = document.getElementById("3");
-                            } else if (this.espai[i][j] === 'Z') {
-                                //document.write("<td style='width: 15px; height:15px;' bgcolor='#f44141'></td>");
-                                img = document.getElementById("4");
-                            } else if (this.espai[i][j] === 'L') {
-                                //document.write("<td style='width: 15px; height:15px;' bgcolor='#41c1f4'></td>");
-                                img = document.getElementById("5");
-                            } else if (this.espai[i][j] === 'J') {
-                                //document.write("<td style='width: 15px; height:15px;' bgcolor='#f49a41'></td>");
-                                img = document.getElementById("6");
-                            } else if (this.espai[i][j] === 'T') {
-                                //document.write("<td style='width: 15px; height:15px;' bgcolor='#4c41f4'></td>");
-                                img = document.getElementById("7");
                             } else {
-                                //document.write("<td style='width: 20px; height:20px;' bgcolor='#727272'></td>");
                                 img = document.getElementById("8");
                             }
-                            ctx.drawImage(img, j * 25, i * 25, 25, 25);
-//                            document.write(this.espai[i][j]);
-//                            document.write(" ");
+                            ctx.drawImage(img, j * 75, i * 75, 75, 75);
                         }
-                        //document.write("</tr>");
                     }
-                    //document.write("</table>");
+
+                    canvas = document.getElementById("espacio");
+                    ctx = canvas.getContext("2d");
+
+                    img = null;
+
+                    for (var i = 0; i < this.espai.length; i++) {
+                        for (var j = 0; j < this.espai[i].length; j++) {
+                            if (this.espai[i][j] === 'O') {
+                                img = document.getElementById("1");
+                            } else if (this.espai[i][j] === 'I') {
+                                img = document.getElementById("2");
+                            } else if (this.espai[i][j] === 'S') {
+                                img = document.getElementById("3");
+                            } else if (this.espai[i][j] === 'Z') {
+                                img = document.getElementById("4");
+                            } else if (this.espai[i][j] === 'L') {
+                                img = document.getElementById("5");
+                            } else if (this.espai[i][j] === 'J') {
+                                img = document.getElementById("6");
+                            } else if (this.espai[i][j] === 'T') {
+                                img = document.getElementById("7");
+                            } else {
+                                img = document.getElementById("8");
+                            }
+                            ctx.drawImage(img, j * 30, i * 30, 30, 30);
+                        }
+                    }
+                    document.getElementById("puntuacio").innerHTML = "Puntuació: " + Joc.puntuacioJugador;
+                    document.getElementById("puntuaciomax").innerHTML = "Màxima puntuació: " + Joc.puntuacioMaxima;
                 }
             };
             var Objecte = function (forma, color) {
@@ -215,18 +251,6 @@ and open the template in the editor.
                     }
                 }
                 this.forma = formaNova;
-            };
-            Objecte.prototype.rotarAntihorari = function () {
-                for (var i = 0; i < 3; i++) {
-                    var formaNova = new Array();
-                    for (var i = 0; i < this.forma.length; i++) {
-                        formaNova[i] = new Array();
-                        for (var j = 0; j < this.forma[i].length; j++) {
-                            formaNova[i][j] = this.forma[this.forma[i].length - 1 - j][i];
-                        }
-                    }
-                    this.forma = formaNova;
-                }
             };
             Objecte.prototype.baixar = function () {
                 Joc.puntuacioJugador++;
@@ -247,6 +271,12 @@ and open the template in the editor.
             Objecte.prototype.retornarPeca = function () {
                 return this.forma;
             };
+
+            function netejarFila(fila) {
+                for (var i = 0; i < Joc.espai.length; i++) {
+                    Joc.espai[fila][i] = 0;
+                }
+            }
 
             function GeneraPecaAleatoria() {
                 var peces = [
@@ -340,15 +370,48 @@ and open the template in the editor.
                 ps.color = Joc.seguentPeca[1];
                 ps.x = 0;
                 ps.y = 3;
+
+                comptadorPeces();
             }
 
+            function incrementarVel() {
+                var peces = Joc.comptador["o"] + Joc.comptador["i"] + Joc.comptador["s"] + Joc.comptador["z"] + Joc.comptador["l"] + Joc.comptador["j"];
+
+                if (peces % 10 === 0) {
+                    velocitat -= ((velocitat / 100) * 10);
+                    clearInterval(a);
+                    a = setInterval(Joc.moviment, velocitat);
+                }
+                console.log(peces);
+                console.log(velocitat);
+            }
+
+            function comptadorPeces() {
+                if (pa.color === "groc") {
+                    Joc.comptador["o"]++;
+                } else if (pa.color === "lila") {
+                    Joc.comptador["i"]++;
+                } else if (pa.color === "verd") {
+                    Joc.comptador["s"]++;
+                } else if (pa.color === "roig") {
+                    Joc.comptador["z"]++;
+                } else if (pa.color === "blau") {
+                    Joc.comptador["l"]++;
+                } else {
+                    Joc.comptador["j"]++;
+                }
+
+                incrementarVel();
+            }
+
+            velocitat = 250;
             Joc.inicialitzarJoc();
             var peca = new Array();
             peca = GeneraPecaAleatoria();
             pa = new Objecte(peca[0], peca[1]);
             Joc.pecaVigent = pa;
             ps = new Objecte(Joc.seguentPeca[0], Joc.seguentPeca[1]);
-            a = setInterval(Joc.moviment, 250);
+            a = setInterval(Joc.moviment, velocitat);
 
             var element = document.getElementById("TODO");
             element.addEventListener("keydown", Joc.introduccioTeclat);
